@@ -27,6 +27,11 @@ namespace cdotp.cwp.Controllers
             return View();
         }
 
+        public IActionResult BabyJeff()
+        {
+            return View();
+        }
+        
         public IActionResult Privacy()
         {
             return View();
