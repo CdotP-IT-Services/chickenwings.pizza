@@ -2,8 +2,7 @@ version: '3'
 
 services:
   cwp:
-    build: '.'
-    #image:  docker.pkg.github.com/goldstorm/cdotp/cdotp:latest
+    image:  nickagoldstein/cdotp:latest
     command: dotnet cdotp.cwp
     ports:
       - '8383:80'
