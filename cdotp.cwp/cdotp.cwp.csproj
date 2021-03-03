@@ -5,10 +5,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Repository" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Content Update="Views\Home\Cwp.cshtml">
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -17,6 +13,20 @@
 
     <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="wwwroot\images\bounce\0890ce02.png" />
+      <None Include="wwwroot\images\bounce\32b1afd5.png" />
+      <None Include="wwwroot\images\bounce\424ff018.png" />
+      <None Include="wwwroot\images\bounce\4c402c4a.png" />
+      <None Include="wwwroot\images\bounce\72a929bb.png" />
+      <None Include="wwwroot\images\bounce\790c261d.png" />
+      <None Include="wwwroot\images\bounce\eaf392a0.png" />
+      <None Include="wwwroot\images\bounce\f732b5c2.png" />
+      <None Include="wwwroot\images\bounce\jeff.png" />
+      <None Include="wwwroot\images\bubble\32aaafab.png" />
+      <None Include="wwwroot\images\bubble\54f8345b.png" />
     </ItemGroup>
 
 </Project>

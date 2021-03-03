@@ -1,0 +1,303 @@
+<script>
+
+// Bubble man
+window.addEventListener('load',() => {		
+	{  
+		let imagesBubbles = [
+			'32aaafab',
+			'54f8345b',
+		]; 
+		let bubbleFrame = 0;
+		let $imgBubble = false;
+		$imgBubble = document.querySelector('img#bubble');
+		
+		let update = function(){
+			if($imgBubble)
+			{  
+				let srcBubble = 'https://megamaker.webmeka.io/images/bubble/'+imagesBubbles[bubbleFrame]+'.png'; 
+				$imgBubble.setAttribute('src',srcBubble);
+			}
+		};
+		
+		setInterval( () => { 
+			bubbleFrame++;  
+			if(bubbleFrame > 1)
+				bubbleFrame = 0;  
+			update();
+		}, 1000 / 8);
+		
+		
+	}
+},false);
+
+window.addEventListener('mousemove', e => {
+	let x = e.pageX; 
+	let left = x - (141/2);
+	let $imgBubble = false;
+	$imgBubble = document.querySelector('img#bubble');
+	$imgBubble.style.left = left+'px'; 
+})
+
+// Bounce man
+
+score = 0;
+gameStop = false;
+speedMultiplier = 1;
+
+boundingBoxCollide = (b1,b2) => {
+	return (!((b1.x+b1.width < b2.x) || (b1.x > b2.x+b2.width) || (b1.y+b1.height < b2.y) || (b1.y > b2.y+b2.height)));
+}
+
+setNewBounceMan = function(){
+	let $img = document.createElement('img');
+	let $body = document.querySelector('body');
+	$img.setAttribute('width',108);
+	$img.setAttribute('height',108);
+	$img.classList.add('bounce');
+	
+	$img.style.opacity = 0;
+	$body.appendChild($img);
+	
+	let images = [
+		'424ff018',
+		'f732b5c2',
+		'eaf392a0',
+		'72a929bb',
+		'0890ce02',
+		'32b1afd5',
+		'4c402c4a',
+		'790c261d'
+	];
+	let currentSrc = images[0];
+	let frame = 0;
+	let bubbleFrame = 0;
+	let maxFrame = images.length - 1; 
+	let update = function(){
+		if($img)
+		{
+			let src = 'https://megamaker.webmeka.io/images/bounce/'+currentSrc+'.png'; 
+			$img.setAttribute('src',src); 
+		}
+	};
+	
+	let xspeed = 6 * speedMultiplier ;
+	let yspeed = 6 * speedMultiplier ;
+	
+	let x = 0;
+	let y = 0;
+	
+	let xPercent = 0;
+	let yPercent = 0;
+	
+	
+	let getWindowSize = () => {
+		var w=window,
+		d=document,
+		e=d.documentElement,
+		g=d.getElementsByTagName('body')[0],
+		x=w.innerWidth||e.clientWidth||g.clientWidth,
+		y=w.innerHeight||e.clientHeight||g.clientHeight;
+		return {x : x , y : y};
+	};
+
+	let checkCorner = () => {
+		if(x < 0 && xspeed < 0)
+		{
+			xspeed *= -1;
+		}
+		if(y < 0 && yspeed < 0)
+		{
+			yspeed *= -1;
+		}
+		
+		let wx = getWindowSize().x;
+		let wy = getWindowSize().y;
+		
+		if(x + 108 > wx && xspeed > 0)
+		{
+			xspeed *= -1;
+		}
+		if(y + 108 > wy && yspeed > 0)
+		{
+			yspeed *= -1;
+		}
+		
+	};
+	
+	let setXYPercent = () => {
+		let wx = getWindowSize().x;
+		let wy = getWindowSize().y;
+		xPercent = x * 100 / wx;
+		yPercent = y * 100 / wy;
+	}
+	
+	let setXYFromPercent = () => {
+		let wx = getWindowSize().x;
+		let wy = getWindowSize().y;
+		x = Math.floor(wx * xPercent / 100);
+		y = Math.floor(wy * yPercent / 100); 
+	}
+	let updatePosition = () => { 
+		setXYPercent();
+		
+		$img.style.left = x+'px';
+		$img.style.top = y+'px';
+		$img.style.opacity = 1;
+		
+		checkCorner(); 
+	}
+	
+	window.addEventListener('resize',() => {
+		setXYFromPercent();
+	});
+
+	
+	let wx = getWindowSize().x - 108;
+	let wy = getWindowSize().y - 108;
+	
+	let b1;
+	let b2;
+	do
+	{
+			
+			
+		x = Math.random() * wx;
+		y = Math.random() * wy;
+		
+		 
+		let $bubble = document.querySelector('#bubble');	 
+		b1 = $bubble.getBoundingClientRect();
+		b1.x -= 100;
+		b1.y -= 100;
+		
+		b1.width  += 200;
+		b1.height += 200;
+		
+		b2 = $img.getBoundingClientRect(); 
+	
+	}
+	while(boundingBoxCollide(b1,b2));
+
+	
+	
+	setInterval( () => {
+		frame++; 
+		if(frame > maxFrame)
+			frame = 0; 
+		
+		currentSrc = images[frame];
+		update();
+	}, 1000 / 10);
+	
+	
+	setInterval( () => {
+		if(gameStop == true)
+			return false;
+		
+		let wx = getWindowSize().x - 108;
+		let wy = getWindowSize().y - 108;
+		
+		
+		if(wx>12)
+			x += xspeed;
+		if(wy>12)
+			y += yspeed;
+	
+			
+	
+		
+		updatePosition();
+		
+		
+		let bounces = document.querySelectorAll('.bounce');
+		let $bubble = document.querySelector('#bubble');	 
+		let b1 = $bubble.getBoundingClientRect();
+			
+		bounces.forEach( $bounce => { 
+			let b2 = $bounce.getBoundingClientRect(); 
+			 
+			if(boundingBoxCollide(b1,b2)){
+				gameStop = true;
+				document.querySelector('#score').style.zIndex = 300;
+				document.querySelector('#score').innerHTML = "YOU LOSE ! <br /> Your score : " + score; 
+			}
+				
+				
+			
+			
+			
+			
+		});
+	}, 1000 / 60);
+	update();  
+}
+
+window.addEventListener('load',() => {		
+	{ 
+		setNewBounceMan();   
+		
+		let $score = document.querySelector('#score');;
+		setInterval( () => {
+			if(gameStop == true)
+				return false;
+			
+			score++;
+			$score.innerHTML = score;
+			
+			if(score % 20 == 0)
+			{
+				setNewBounceMan();
+				speedMultiplier *= 1.1;
+				
+			}
+		}, 1000 / 5);
+		
+	}
+
+},false);
+</script>
+<style type="text/css">
+	body{
+		background:rgba(32,34,37,1);
+		margin:0;
+		padding:0;
+		position:relative;
+		overflow:hidden;
+		width:100vw; 
+		height:100vh;
+		pointer-events:move; 
+	}
+	img
+	{
+		position:absolute;
+		left:0px;
+		top:0px; 
+	}
+	img.bounce
+	{
+		z-index:100; 
+		image-rendering:pixelated;
+		opacity:0; 
+	}
+	#score
+	{
+		font-size:32px;
+		color:white;
+		opacity:0.8;
+		text-align:center;
+		width:100%;
+		top:40px;
+		left:0px;
+		font-family:Tahoma;
+		position:absolute;
+		z-index:20;
+	}
+</style>
+<div id="score">0</div>
+<audio autoplay>
+  <source src="../../wwwroot/audio/that-way.mp3" type="audio/mpeg">
+</audio>
+
+
+<img src="https://megamaker.webmeka.io/images/bounce/jeff.png" style="z-index:50;position:absolute;top:auto;left:auto;bottom:0;right:0;opacity:0.75;" /> 
+<img src="https://megamaker.webmeka.io/images/bubble/32aaafab.png" id="bubble" width="141" height="72" style="z-index:50;image-rendering:pixelated;position:absolute;top:auto;left:auto;bottom:0;right:224px;" />
