@@ -1,0 +1,47 @@
+name: Trigger auto deployment for cwp-site
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ master ]
+    paths:
+    - '**'
+    - '.github/workflows/cwp-site-AutoDeployTrigger-245cbb0c-b397-48f4-82f5-ed6d802f9562.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+      contents: read #Required when GH token is used to authenticate with private repo
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.CWPSITE_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.CWPSITE_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.CWPSITE_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }} 
+          registryUrl: hub.docker.com
+          registryUsername: ${{ secrets.CWPSITE_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.CWPSITE_REGISTRY_PASSWORD }}
+          containerAppName: cwp-site
+          resourceGroup: CWP_Group
+          imageToBuild: hub.docker.com/cwp-site:${{ github.sha }}
+          _buildArgumentsKey_: |
+            _buildArgumentsValues_
+
+
