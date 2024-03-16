@@ -40,7 +40,7 @@ jobs:
           registryPassword: ${{ secrets.CWPSITE_REGISTRY_PASSWORD }}
           containerAppName: cwp-site
           resourceGroup: CWP_Group
-          imageToBuild: registry.hub.docker.com/cwp-site:${{ github.sha }}
+          imageToBuild: docker.io/cwp-site:${{ github.sha }}
           _buildArgumentsKey_: |
             _buildArgumentsValues_
 
